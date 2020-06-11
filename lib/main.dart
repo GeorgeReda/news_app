@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'constants.dart';
+import 'routes/main_screen.dart';
 
 void main() async {
   runApp(MyApp());
@@ -7,9 +10,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'News App',
-      home: Scaffold(),
+      home: MainScreen(),
+      theme: Constants.lightTheme,
+      defaultTransition: Transition.scale,
     );
   }
 }
