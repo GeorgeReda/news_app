@@ -15,7 +15,7 @@ class Repo {
       String from,
       String to,
       String sortBy,
-      @required int page,
+      int page,
       int pageSize = 20}) {
     Map<String, dynamic> _queryParams = Map<String, dynamic>();
     String url;
@@ -33,7 +33,7 @@ class Repo {
       _queryParams["pageSize"] = pageSize;
       _queryParams["page"] = page;
     }
-    if (sort == 'topHeadlines' || sort == '') {
+    if (sort == 'topHeadlines' || sort == 'sources') {
       _queryParams["country"] = "$country";
       if (category != null) _queryParams["category"] = "$category";
     }
@@ -55,6 +55,9 @@ class Repo {
         print(value);
         print(value.data);
         message = value.data;
+        return;
+      }).catchError((e) {
+        message = e;
         return;
       });
     } catch (e) {
