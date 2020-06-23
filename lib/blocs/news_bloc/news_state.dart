@@ -12,7 +12,7 @@ class NewsInitial extends NewsState {}
 class NewsLoading extends NewsState {}
 
 class NewsDone extends NewsState {
-  final data;
+  final List data;
 
   NewsDone({@required this.data});
   @override

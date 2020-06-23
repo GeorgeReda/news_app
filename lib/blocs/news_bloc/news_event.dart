@@ -21,11 +21,12 @@ class TopHeadlines extends NewsEvent {
 }
 
 class Everything extends NewsEvent {
-  final String q, sources, from, to, sortBy;
+  final String q, sources, from, to, sortBy, id;
   final int pageSize, page;
   final Languages language;
   Everything(
       {this.q,
+      this.id,
       this.sources,
       this.language,
       this.from,
@@ -35,7 +36,7 @@ class Everything extends NewsEvent {
       this.pageSize});
   @override
   List<Object> get props =>
-      [q, sources, language, from, to, sortBy, page, pageSize];
+      [q, sources, language, from, to, sortBy, page, pageSize, id];
 }
 
 class Sources extends NewsEvent {
@@ -50,13 +51,13 @@ class Sources extends NewsEvent {
 }
 
 enum Categories {
-  business,
-  entertainment,
-  general,
-  health,
-  science,
-  sports,
-  technology
+  Business,
+  Entertainment,
+  General,
+  Health,
+  Science,
+  Sports,
+  Technology
 }
 enum Languages { ar, de, en, es, fr, he, it, nl, no, pt, ru, se, ud, zh }
 enum Countries {

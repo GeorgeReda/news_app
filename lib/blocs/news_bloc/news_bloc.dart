@@ -11,6 +11,8 @@ import 'package:meta/meta.dart';
 part 'news_event.dart';
 part 'news_state.dart';
 
+enum Sorts { TopHeadlines, Everything, Sources }
+
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final Repo _repo = Repo();
   @override
@@ -23,52 +25,57 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
     // yield General news first
     if (event is NewsMain) {
       yield NewsLoading();
-      await _repo.getData(sort: 'topHeadlines', page: 0);
+      await _repo.getData(sort: Sorts.TopHeadlines, page: 0);
       final data = json.decode(_repo.message);
       if (data['status'] == 'error') yield NewsFailure(error: data['message']);
       List posts = [];
       for (int i = 0; i <= data['articles'].length - 1; i++) {
         var path = data['articles'][i];
         posts.add(Post(
-          author: path['author'],
-          name: path['source']['name'],
-          content: path['content'],
-          description: path['description'],
-          publishedAt: path['publishedAt'],
-          title: path['title'],
-          urlToImage: path['urlToImage'],
+          author: '${path['author']}',
+          name: '${path['source']['name']}',
+          content: '${path['content']}',
+          description: '${path['description']}',
+          publishedAt: '${path['publishedAt']}',
+          title: '${path['title']}',
+          urlToImage: '${path['urlToImage']}',
         ));
       }
       yield NewsDone(data: posts);
     } else if (event is TopHeadlines) {
       yield NewsLoading();
+      print(event.sources);
       await _repo.getData(
-          sort: 'topHeadlines',
+          sort: Sorts.TopHeadlines,
+          id: event.sources,
           page: event.page,
           country: event.country.toString(),
-          category: event.category.toString(),
+          category: event.category.toString().toLowerCase(),
           pageSize: event.pageSize,
           query: event.q);
-      final data = json.decode(_repo.message);
+      final data = await _repo.message;
       if (data['status'] == 'error') yield NewsFailure(error: data['message']);
-      List posts = [];
+      List<Post> posts = [];
       for (int i = 0; i <= data['articles'].length - 1; i++) {
         var path = data['articles'][i];
+        print(path['source']['id']);
         posts.add(Post(
-          author: path['author'],
-          name: path['source']['name'],
-          content: path['content'],
-          description: path['description'],
-          publishedAt: path['publishedAt'],
-          title: path['title'],
-          urlToImage: path['urlToImage'],
+          author: '${path['author']}',
+          name: '${path['source']['name']}',
+          content: '${path['content']}',
+          description: '${path['description']}',
+          publishedAt: '${path['publishedAt']}',
+          title: '${path['title']}',
+          urlToImage: '${path['urlToImage']}',
         ));
       }
       yield NewsDone(data: posts);
     } else if (event is Everything) {
       yield NewsLoading();
+      print(event.id);
       await _repo.getData(
-          sort: 'everything',
+          id: event.sources,
+          sort: Sorts.Everything,
           language: event.language.toString(),
           from: DateTime.parse(event.from).toIso8601String(),
           to: DateTime.parse(event.to).toIso8601String(),
@@ -82,33 +89,34 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
       for (int i = 0; i <= data['articles'].length - 1; i++) {
         var path = data['articles'][i];
         posts.add(Post(
-          author: path['author'],
-          name: path['source']['name'],
-          content: path['content'],
-          description: path['description'],
-          publishedAt: path['publishedAt'],
-          title: path['title'],
-          urlToImage: path['urlToImage'],
+          author: '${path['author']}',
+          name: '${path['source']['name']}',
+          content: '${path['content']}',
+          description: '${path['description']}',
+          publishedAt: '${path['publishedAt']}',
+          title: '${path['title']}',
+          urlToImage: '${path['urlToImage']}',
         ));
       }
       yield NewsDone(data: posts);
     } else if (event is Sources) {
       yield NewsLoading();
       await _repo.getData(
-          sort: 'sources',
+          sort: Sorts.Sources,
           language: event.language.toString(),
           country: event.country.toString(),
-          category: event.category.toString());
-      final data = json.decode(_repo.message);
+          category: event.category.toString().toLowerCase());
+      final data = _repo.message;
       if (data['status'] == 'error') yield NewsFailure(error: data['message']);
-      List sources = [];
-      for (int i = 0; i <= data['articles'].length - 1; i++) {
+      List<Source> sources = [];
+      for (int i = 0; i <= data['sources'].length - 1; i++) {
         var path = data['sources'][i];
         sources.add(Source(
-          name: path['name'],
-          description: path['description'],
-          url: path['url'],
-          category: path['category'],
+          id: '${path['id']}',
+          name: '${path['name']}',
+          description: '${path['description']}',
+          url: '${path['url']}',
+          category: '${path['category']}',
         ));
       }
       yield NewsDone(data: sources);
